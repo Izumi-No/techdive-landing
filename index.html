@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tech Dive — Catanduva</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #1c0730;
+    --bg-panel: #2a0f45;
+    --bg-panel-2: #35134f;
+    --gold: #f4c14e;
+    --gold-dim: #c99a3a;
+    --magenta: #c93f8f;
+    --pink-light: #eda3cf;
+    --ink: #f7f1fb;
+    --ink-muted: #c6acdd;
+    --line: rgba(244,193,78,0.28);
+    --line-soft: rgba(233,166,214,0.16);
+    --radius-card: 4px;
+    --font-display: 'Chakra Petch', sans-serif;
+    --font-body: 'Manrope', sans-serif;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html{ scroll-behavior: smooth; }
+
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  a{ color: inherit; }
+
+  img, svg{ max-width: 100%; }
+
+  .wrap{
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+
+  /* ---------- background circuitry (decorative, shared) ---------- */
+  .circuit-field{
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ---------- nav ---------- */
+  header.nav{
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(20,5,35,0.72);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .nav-inner{
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    padding: 16px 28px;
+    max-width: 1180px;
+    margin: 0 auto;
+  }
+  .logo{
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.25rem;
+    letter-spacing: 0.02em;
+    display:flex;
+    gap: 0.35em;
+  }
+  .logo .dive{ color: var(--gold); }
+  .nav-links{
+    display:flex;
+    gap: 30px;
+    font-size: 0.94rem;
+    color: var(--ink-muted);
+  }
+  .nav-links a{ text-decoration:none; transition: color .2s; }
+  .nav-links a:hover{ color: var(--gold); }
+  .nav-cta{
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 0.9rem;
+    background: var(--gold);
+    color: #241033;
+    padding: 10px 20px;
+    border-radius: var(--radius-card);
+    text-decoration: none;
+    border: none;
+    cursor:pointer;
+    transition: transform .18s ease, background .18s ease;
+  }
+  .nav-cta:hover{ background: #ffd873; transform: translateY(-1px); }
+  .nav-toggle{ display:none; }
+
+  /* ---------- hero ---------- */
+  .hero{
+    position: relative;
+    padding: 96px 0 120px;
+    overflow:hidden;
+    background:
+      radial-gradient(120% 90% at 82% 8%, rgba(201,63,143,0.28), transparent 55%),
+      radial-gradient(90% 70% at 10% 100%, rgba(244,193,78,0.10), transparent 60%),
+      var(--bg);
+  }
+
+  .hero-grid{
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 40px;
+    align-items: center;
+  }
+
+  .eyebrow-tags{
+    display:flex;
+    gap: 22px;
+    font-size: 0.82rem;
+    color: var(--pink-light);
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+  .eyebrow-tags span{ position: relative; padding-left: 14px; }
+  .eyebrow-tags span::before{
+    content:'';
+    position:absolute; left:0; top:50%;
+    width:6px; height:6px;
+    background: var(--gold);
+    border-radius: 50%;
+    transform: translateY(-50%);
+  }
+
+  .hero h1{
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2.6rem, 5.4vw, 4.1rem);
+    line-height: 1.04;
+    margin: 0 0 24px;
+    max-width: 11ch;
+  }
+  .hero h1 .accent{ color: var(--gold); }
+
+  .hero p.lede{
+    font-size: 1.14rem;
+    color: var(--ink-muted);
+    max-width: 46ch;
+    margin: 0 0 36px;
+  }
+
+  .hero-actions{
+    display:flex;
+    align-items:center;
+    gap: 22px;
+    flex-wrap: wrap;
+    margin-bottom: 44px;
+  }
+  .btn-primary{
+    font-family: var(--font-body);
+    font-weight: 800;
+    font-size: 1rem;
+    background: var(--gold);
+    color: #241033;
+    padding: 15px 30px;
+    border-radius: var(--radius-card);
+    text-decoration: none;
+    display: inline-block;
+    border: none;
+    cursor:pointer;
+    transition: transform .18s ease, box-shadow .18s ease;
+    box-shadow: 0 10px 30px -10px rgba(244,193,78,0.55);
+  }
+  .btn-primary:hover{ transform: translateY(-2px); }
+  .btn-ghost{
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--ink);
+    text-decoration: none;
+    border-bottom: 1px solid var(--gold-dim);
+    padding-bottom: 3px;
+    transition: border-color .18s ease, color .18s ease;
+  }
+  .btn-ghost:hover{ color: var(--gold); border-color: var(--gold); }
+
+  .date-card{
+    display:flex;
+    gap: 18px;
+    align-items:center;
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-card);
+    padding: 16px 20px;
+    max-width: 420px;
+  }
+  .date-card .num{
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 2.1rem;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .date-card .meta{ font-size: 0.9rem; color: var(--ink-muted); }
+  .date-card .meta strong{ display:block; color: var(--ink); font-size: 1rem; font-weight: 700;}
+
+  /* hero animated sonar/circuit scene */
+  .hero-visual{
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 440px;
+    margin: 0 auto;
+    aspect-ratio: 1 / 1;
+  }
+  .hero-visual svg{ width: 100%; height: 100%; overflow: visible; }
+
+  .ring-rotate{
+    transform-origin: 210px 210px;
+    animation: spin 22s linear infinite;
+  }
+  .ring-ticks{
+    transform-origin: 210px 210px;
+    animation: spin 22s linear infinite reverse;
+  }
+  @keyframes spin{ to{ transform: rotate(360deg); } }
+
+  .pulse-ring{
+    transform-origin: 210px 210px;
+    transform-box: fill-box;
+    animation: sonar 3.6s cubic-bezier(.2,.6,.3,1) infinite;
+  }
+  .pulse-ring.p2{ animation-delay: 1.2s; }
+  .pulse-ring.p3{ animation-delay: 2.4s; }
+  @keyframes sonar{
+    0%{ transform: scale(0.3); opacity: 0.6; }
+    100%{ transform: scale(1); opacity: 0; }
+  }
+
+  .core-glow{
+    animation: glow 3.2s ease-in-out infinite;
+    transform-origin: 210px 210px;
+  }
+  @keyframes glow{
+    0%, 100%{ filter: drop-shadow(0 0 6px rgba(244,193,78,0.35)); }
+    50%{ filter: drop-shadow(0 0 18px rgba(244,193,78,0.75)); }
+  }
+
+  .tick-dot{ animation: blink 2.6s ease-in-out infinite; }
+  .tick-dot:nth-child(2){ animation-delay: .3s; }
+  .tick-dot:nth-child(3){ animation-delay: .6s; }
+  .tick-dot:nth-child(4){ animation-delay: .9s; }
+  .tick-dot:nth-child(5){ animation-delay: 1.2s; }
+  .tick-dot:nth-child(6){ animation-delay: 1.5s; }
+  @keyframes blink{
+    0%, 100%{ opacity: 0.25; }
+    50%{ opacity: 1; }
+  }
+
+  .hero-bubbles{
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+  }
+  .bubble{
+    position: absolute;
+    bottom: -20px;
+    border-radius: 50%;
+    animation: rise linear infinite;
+    opacity: 0;
+  }
+  @keyframes rise{
+    0%{ transform: translateY(0) scale(1); opacity: 0; }
+    10%{ opacity: 0.7; }
+    90%{ opacity: 0.4; }
+    100%{ transform: translateY(-560px) scale(1.15); opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .bubble, .pulse-ring, .core-glow, .tick-dot, .ring-rotate, .ring-ticks{ animation: none; }
+    .pulse-ring{ opacity: 0; }
+    html{ scroll-behavior: auto; }
+  }
+
+  /* ---------- section shared ---------- */
+  section{ position: relative; padding: 88px 0; }
+  .section-head{
+    max-width: 62ch;
+    margin-bottom: 52px;
+  }
+  .section-head .kicker{
+    color: var(--pink-light);
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+  }
+  .section-head h2{
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+    margin: 0 0 16px;
+  }
+  .section-head p{
+    color: var(--ink-muted);
+    font-size: 1.05rem;
+    margin: 0;
+  }
+
+  /* about */
+  .about{ background: var(--bg); }
+  .about-grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 56px;
+    align-items:center;
+  }
+  .about-copy p{ color: var(--ink-muted); font-size: 1.05rem; margin: 0 0 18px; }
+  .about-copy .tagline{
+    font-family: var(--font-display);
+    font-weight: 600;
+    color: var(--gold);
+    font-size: 1.15rem;
+    margin-top: 26px;
+  }
+  .pillars-mini{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .pillars-mini div{
+    border: 1px solid var(--line-soft);
+    border-radius: var(--radius-card);
+    padding: 18px;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--ink-muted);
+  }
+  .pillars-mini div span{ display:block; color: var(--gold); font-size:0.78rem; font-family: var(--font-body); font-weight:700; margin-bottom: 6px; }
+
+  /* what to expect */
+  .expect{ background: var(--bg-panel); }
+  .card-grid{
+    display:grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+  .card{
+    background: var(--bg);
+    border: 1px solid var(--line-soft);
+    padding: 28px 22px;
+    border-radius: var(--radius-card);
+    transition: border-color .2s ease, transform .2s ease;
+  }
+  .card:hover{ border-color: var(--gold-dim); transform: translateY(-3px); }
+  .card .icon{ color: var(--gold); margin-bottom: 18px; }
+  .card h3{
+    font-family: var(--font-display);
+    font-size: 1.08rem;
+    margin: 0 0 10px;
+    font-weight: 600;
+  }
+  .card p{ color: var(--ink-muted); font-size: 0.93rem; margin:0; }
+
+  /* details / location */
+  .details{ background: var(--bg); }
+  .details-grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 56px;
+  }
+  .detail-row{
+    display:flex;
+    gap: 18px;
+    padding: 22px 0;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .detail-row:last-child{ border-bottom: none; }
+  .detail-row .icon{ color: var(--gold); flex-shrink: 0; margin-top: 2px; }
+  .detail-row h4{ margin: 0 0 4px; font-family: var(--font-display); font-weight: 600; font-size: 1.02rem; }
+  .detail-row p{ margin: 0; color: var(--ink-muted); font-size: 0.95rem; }
+
+  .map-panel{
+    border: 1px solid var(--line);
+    border-radius: var(--radius-card);
+    background: var(--bg-panel);
+    padding: 30px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    gap: 16px;
+  }
+  .map-panel .seal{
+    display:flex;
+    align-items:center;
+    gap: 14px;
+    color: var(--ink-muted);
+    font-size: 0.85rem;
+    border-top: 1px solid var(--line-soft);
+    padding-top: 18px;
+    margin-top: 6px;
+  }
+  .map-panel h4{ font-family: var(--font-display); font-size: 1.2rem; margin: 0 0 6px; }
+  .map-panel .addr{ color: var(--ink-muted); font-size: 0.95rem; margin: 0; }
+
+  /* CTA band */
+  .cta-band{
+    background: linear-gradient(120deg, var(--bg-panel-2), var(--bg-panel));
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    text-align:center;
+    padding: 90px 0;
+  }
+  .cta-band h2{
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(1.9rem, 4vw, 2.8rem);
+    margin: 0 0 18px;
+  }
+  .cta-band p{ color: var(--ink-muted); max-width: 50ch; margin: 0 auto 34px; }
+
+  /* footer */
+  footer{
+    padding: 48px 0 36px;
+    font-size: 0.88rem;
+    color: var(--ink-muted);
+  }
+  .footer-inner{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap: wrap;
+    gap: 18px;
+    border-top: 1px solid var(--line-soft);
+    padding-top: 28px;
+  }
+  .footer-logo{ font-family: var(--font-display); font-weight: 700; color: var(--ink); }
+  .footer-logo .dive{ color: var(--gold); }
+
+  /* responsive */
+  @media (max-width: 880px){
+    .hero-grid{ grid-template-columns: 1fr; }
+    .hero-visual{ order: -1; max-width: 260px; margin: 0 auto 8px; }
+    .about-grid, .details-grid{ grid-template-columns: 1fr; }
+    .card-grid{ grid-template-columns: 1fr 1fr; }
+    .nav-links{ display:none; }
+  }
+  @media (max-width: 520px){
+    .card-grid{ grid-template-columns: 1fr; }
+    .hero{ padding: 64px 0 80px; }
+    .wrap{ padding: 0 20px; }
+    section{ padding: 64px 0; }
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <div class="logo">TECH<span class="dive">DIVE</span></div>
+    <nav class="nav-links">
+      <a href="#sobre">Sobre</a>
+      <a href="#programacao">Programação</a>
+      <a href="#local">Local</a>
+    </nav>
+    <a href="#inscricao" class="nav-cta">Quero participar</a>
+  </div>
+</header>
+
+<section class="hero">
+  <svg class="circuit-field" viewBox="0 0 1180 640" preserveAspectRatio="none" aria-hidden="true">
+    <g stroke="var(--gold-dim)" stroke-width="1" fill="none" opacity="0.35">
+      <path d="M0 60 H120 L150 90 V180"/>
+      <path d="M0 140 H60"/>
+      <circle cx="120" cy="60" r="4" fill="var(--gold)" stroke="none"/>
+      <circle cx="150" cy="180" r="3" fill="var(--gold)" stroke="none"/>
+      <path d="M1180 40 H1040 L1010 70 V150 L980 180"/>
+      <circle cx="1040" cy="40" r="4" fill="var(--gold)" stroke="none"/>
+      <circle cx="980" cy="180" r="3" fill="var(--magenta)" stroke="none"/>
+      <path d="M1180 260 H1100"/>
+      <circle cx="1100" cy="260" r="3" fill="var(--gold)" stroke="none"/>
+    </g>
+  </svg>
+
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow-tags">
+        <span>Ideias</span><span>Pessoas</span><span>Tecnologia</span><span>Futuro</span>
+      </div>
+      <h1>Mergulhe em novas <span class="accent">possibilidades.</span></h1>
+      <p class="lede">Um evento para quem respira tecnologia, inovação e novas experiências — conectando estudantes, profissionais e entusiastas de Catanduva e região.</p>
+
+      <div class="hero-actions">
+        <a href="#inscricao" class="btn-primary">Quero participar</a>
+        <a href="#programacao" class="btn-ghost">Ver o que rola no evento</a>
+      </div>
+
+      <div class="date-card">
+        <div class="num">28</div>
+        <div class="meta">
+          <strong>Sábado, 28 de novembro de 2026</strong>
+          IFSP — Campus Catanduva
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <svg viewBox="0 0 420 420" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <!-- slow-rotating dashed orbit -->
+        <circle class="ring-rotate" cx="210" cy="210" r="176" fill="none" stroke="rgba(244,193,78,0.3)" stroke-width="1" stroke-dasharray="2 14"/>
+
+        <!-- circuit tick nodes around the orbit, counter-rotating -->
+        <g class="ring-ticks">
+          <circle class="tick-dot" cx="210" cy="34" r="4" fill="#f4c14e"/>
+          <circle class="tick-dot" cx="342" cy="120" r="3.5" fill="#eda3cf"/>
+          <circle class="tick-dot" cx="342" cy="300" r="4" fill="#f4c14e"/>
+          <circle class="tick-dot" cx="210" cy="386" r="3.5" fill="#eda3cf"/>
+          <circle class="tick-dot" cx="78" cy="300" r="4" fill="#f4c14e"/>
+          <circle class="tick-dot" cx="78" cy="120" r="3.5" fill="#eda3cf"/>
+        </g>
+
+        <!-- sonar pulses -->
+        <circle class="pulse-ring p1" cx="210" cy="210" r="46" fill="none" stroke="#f4c14e" stroke-width="1.6"/>
+        <circle class="pulse-ring p2" cx="210" cy="210" r="46" fill="none" stroke="#c93f8f" stroke-width="1.6"/>
+        <circle class="pulse-ring p3" cx="210" cy="210" r="46" fill="none" stroke="#f4c14e" stroke-width="1.6"/>
+
+        <!-- connecting circuit traces -->
+        <g stroke="rgba(244,193,78,0.4)" stroke-width="1.4" fill="none">
+          <path d="M210 34 V96"/>
+          <path d="M342 120 L268 168"/>
+          <path d="M342 300 L268 252"/>
+          <path d="M78 300 L152 252"/>
+          <path d="M78 120 L152 168"/>
+        </g>
+
+        <!-- core: power / depth symbol -->
+        <g class="core-glow">
+          <circle cx="210" cy="210" r="50" fill="#2a0f45" stroke="#f4c14e" stroke-width="2"/>
+          <path d="M210 184 V208" stroke="#f4c14e" stroke-width="5" stroke-linecap="round"/>
+          <path d="M192 196 A24 24 0 1 0 228 196" stroke="#f4c14e" stroke-width="5" fill="none" stroke-linecap="round"/>
+        </g>
+      </svg>
+
+      <div class="hero-bubbles" aria-hidden="true">
+        <span class="bubble" style="left:18%; width:8px; height:8px; background:#eda3cf; animation-duration:9s; animation-delay:0s;"></span>
+        <span class="bubble" style="left:32%; width:5px; height:5px; background:#f4c14e; animation-duration:7s; animation-delay:1.4s;"></span>
+        <span class="bubble" style="left:50%; width:10px; height:10px; background:#f4c14e; animation-duration:11s; animation-delay:2.8s;"></span>
+        <span class="bubble" style="left:68%; width:6px; height:6px; background:#eda3cf; animation-duration:8s; animation-delay:.6s;"></span>
+        <span class="bubble" style="left:82%; width:7px; height:7px; background:#f4c14e; animation-duration:10s; animation-delay:3.6s;"></span>
+        <span class="bubble" style="left:60%; width:4px; height:4px; background:#eda3cf; animation-duration:6.5s; animation-delay:2s;"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="about" id="sobre">
+  <div class="wrap about-grid">
+    <div class="about-copy">
+      <div class="section-head" style="margin-bottom:0;">
+        <div class="kicker">Sobre o evento</div>
+        <h2>Mais que tecnologia, conexões reais.</h2>
+      </div>
+      <p style="margin-top:20px;">O Tech Dive Catanduva é um encontro que conecta estudantes, profissionais e entusiastas para compartilhar conhecimento, explorar tendências e criar oportunidades no mundo tech.</p>
+      <p>Um dia inteiro dedicado a palestras, oficinas práticas e trocas reais entre quem está começando e quem já constrói o futuro da tecnologia na região.</p>
+      <div class="tagline">Um evento de extensão do IFSP — Campus Catanduva</div>
+    </div>
+    <div class="pillars-mini">
+      <div><span>01</span>Ideias que provocam</div>
+      <div><span>02</span>Pessoas que constroem</div>
+      <div><span>03</span>Tecnologia aplicada</div>
+      <div><span>04</span>Futuro em construção</div>
+    </div>
+  </div>
+</section>
+
+<section class="expect" id="programacao">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="kicker">O que você encontra por lá</div>
+      <h2>Um dia de imersão, do palco às rodas de conversa.</h2>
+      <p>A programação completa ainda está sendo fechada — mas a espinha dorsal do evento já está definida.</p>
+    </div>
+    <div class="card-grid">
+      <div class="card">
+        <div class="icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><line x1="12" y1="18" x2="12" y2="22"/></svg>
+        </div>
+        <h3>Palestras inspiradoras</h3>
+        <p>Conversas com profissionais e professores sobre onde a tecnologia está indo — e como entrar nesse jogo.</p>
+      </div>
+      <div class="card">
+        <div class="icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9.5 2a6.5 6.5 0 0 0-4 11.6c.9.7 1.5 1.8 1.5 3v.4h6v-.4c0-1.2.6-2.3 1.5-3A6.5 6.5 0 0 0 9.5 2Z" transform="translate(2.5 0)"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="10" y1="22.5" x2="14" y2="22.5"/></svg>
+        </div>
+        <h3>Oficinas práticas</h3>
+        <p>Atividades mão na massa para experimentar ferramentas e ideias na prática, sem enrolação.</p>
+      </div>
+      <div class="card">
+        <div class="icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="7 8 3 12 7 16"/><polyline points="17 8 21 12 17 16"/><line x1="14" y1="4" x2="10" y2="20"/></svg>
+        </div>
+        <h3>Projetos e exposições</h3>
+        <p>Espaço para mostrar o que estudantes e coletivos locais estão construindo com tecnologia.</p>
+      </div>
+      <div class="card">
+        <div class="icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 20c0-2-1.7-3.5-5-3.5S7 18 7 20"/><circle cx="12" cy="10" r="3.2"/><path d="M2 15c1-1.4 2.3-2 4-2"/><path d="M22 15c-1-1.4-2.3-2-4-2"/><circle cx="4.5" cy="8.5" r="2"/><circle cx="19.5" cy="8.5" r="2"/></svg>
+        </div>
+        <h3>Networking e oportunidades</h3>
+        <p>Conexões com empresas, instituições de ensino e colegas que podem virar parceria de verdade.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="details" id="local">
+  <div class="wrap details-grid">
+    <div>
+      <div class="section-head" style="margin-bottom:0;">
+        <div class="kicker">Data e local</div>
+        <h2>Marque na agenda.</h2>
+      </div>
+      <div style="margin-top:24px;">
+        <div class="detail-row">
+          <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+          <div>
+            <h4>Sábado, 28 de novembro de 2026</h4>
+            <p>Evento presencial, com duração de um dia.</p>
+          </div>
+        </div>
+        <div class="detail-row">
+          <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-6.1-7-11a7 7 0 0 1 14 0c0 4.9-7 11-7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg></div>
+          <div>
+            <h4>IFSP — Campus Catanduva</h4>
+            <p>Instituto Federal de São Paulo, Catanduva — SP.</p>
+          </div>
+        </div>
+        <div class="detail-row">
+          <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><line x1="12" y1="18" x2="12" y2="22"/></svg></div>
+          <div>
+            <h4>Entrada gratuita</h4>
+            <p>Vagas limitadas conforme a estrutura do campus — inscrição antecipada recomendada.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="map-panel">
+      <h4>Instituto Federal de São Paulo</h4>
+      <p class="addr">Campus Catanduva — Catanduva, SP</p>
+      <p class="addr" style="font-size:0.9rem;">Auditório, laboratórios e áreas abertas do campus recebem palestras, oficinas e o espaço de exposições.</p>
+      <div class="seal">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l8 4v5c0 5-3.4 8.4-8 9-4.6-.6-8-4-8-9V7l8-4Z"/></svg>
+        Projeto de extensão — Curso de ADS, IFSP Campus Catanduva
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-band" id="inscricao">
+  <div class="wrap">
+    <h2>Bora mergulhar junto?</h2>
+    <p>As inscrições e a programação completa serão divulgadas em breve pelos nossos canais. Fique de olho.</p>
+    <a href="#" class="btn-primary">Quero ser avisado</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-inner">
+    <div class="footer-logo">TECH<span class="dive">DIVE</span> · CATANDUVA</div>
+    <div>Mergulhando no ecossistema de inovação e tecnologia.</div>
+    <div>IFSP — Campus Catanduva, 2026</div>
+  </div>
+</footer>
+
+</body>
+</html>
